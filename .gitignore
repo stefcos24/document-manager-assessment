@@ -283,4 +283,4 @@ propylon_document_manager/media/
 *.sqlite*
 
 ## Media folder
-.media/
+media/
