@@ -274,6 +274,9 @@ dump.rdb
 ### Project template
 propylon_document_manager/media/
 
+### JetBrains IDEs
+.idea/
+
 .pytest_cache/
 
 ### DB
