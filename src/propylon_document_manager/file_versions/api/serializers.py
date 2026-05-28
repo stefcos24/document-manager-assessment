@@ -72,4 +72,25 @@ class EmailAuthTokenSerializer(serializers.Serializer):
 class FileVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileVersion
-        fields = "__all__"
+        fields = [
+            "id",
+            "file_name",
+            "file_url",
+            "version_number",
+            "file_hash",
+            "file_size",
+            "content_type",
+            "created_at",
+        ]
+        read_only_fields = fields
+
+
+class FileVersionUploadSerializer(serializers.Serializer):
+    file = serializers.FileField()
+    file_url = serializers.CharField(max_length=2048)
+
+    def validate_file_url(self, value):
+        cleaned = value.strip("/")
+        if not cleaned:
+            raise serializers.ValidationError("file_url cannot be empty.")
+        return cleaned
