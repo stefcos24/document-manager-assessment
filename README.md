@@ -10,7 +10,7 @@ The API project is a [Django/DRF](https://www.django-rest-framework.org/) projec
 3. `$ make serve` to start the development server on port 8001.
 4. `$ make test` to run the limited test suite via PyTest.
 ### Client Development 
-See the Readme [here](https://github.com/propylon/document-manager-assessment/blob/main/client/doc-manager/README.md)
+See the Readme [here](https://github.com/propylon/document-manager-assessment/blob/main/client/doc-manager/README_v2.md)
 
 ##
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
