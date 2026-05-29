@@ -141,3 +141,32 @@ class DocumentRetrieveView(APIView):
         response["X-File-Hash"] = file_version.file_hash
         response["X-File-Version"] = str(file_version.version_number)
         return response
+
+
+class CASRetrieveView(APIView):
+    """
+    Retrieve a file by its SHA-256 content hash (Content Addressable Storage).
+    """
+
+    def get(self, request, file_hash):
+        if len(file_hash) != 64 or not all(c in "0123456789abcdef" for c in file_hash.lower()):
+            return Response(
+                {"detail": "Invalid hash format. Expected 64-character hex string (SHA-256)."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        file_version = get_object_or_404(
+            FileVersion,
+            owner=request.user,
+            file_hash=file_hash.lower(),
+        )
+
+        response = FileResponse(
+            file_version.file.open("rb"),
+            content_type=file_version.content_type,
+        )
+        response["Content-Disposition"] = f'attachment; filename="{file_version.file_name}"'
+        response["X-File-Hash"] = file_version.file_hash
+        response["X-File-Version"] = str(file_version.version_number)
+        response["X-File-Url"] = file_version.file_url
+        return response

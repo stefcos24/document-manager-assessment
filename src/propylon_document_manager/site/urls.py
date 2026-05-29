@@ -3,6 +3,7 @@ from django.conf.urls.static import static
 from django.urls import include, path
 
 from propylon_document_manager.file_versions.api.views import (
+    CASRetrieveView,
     DocumentRetrieveView,
     EmailObtainAuthToken,
     RegisterView,
@@ -18,6 +19,9 @@ urlpatterns = [
 
     # Document retrieval
     path("api/documents/<path:file_url>", DocumentRetrieveView.as_view(), name="document-retrieve"),
+
+    # CAS - Content Addressable Storage
+    path("api/cas/<str:file_hash>/", CASRetrieveView.as_view(), name="cas-retrieve"),
 
     # DRF auth token
     path("api-auth/", include("rest_framework.urls")),
