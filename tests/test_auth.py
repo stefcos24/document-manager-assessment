@@ -9,7 +9,7 @@ class TestRegister:
     def test_creates_user_and_returns_token(self, api_client):
         resp = api_client.post(
             self.URL,
-            {"email": "test@example.com", "password": "test1234", "name": "New User"},
+            {"email": "test@example.com", "password": "Propylon2026", "name": "New User"},
             format="json",
         )
         assert resp.status_code == 201
@@ -18,7 +18,7 @@ class TestRegister:
         assert data["user"]["email"] == "test@example.com"
 
     def test_duplicate_email_returns_400(self, api_client):
-        payload = {"email": "test_two@example.com", "password": "test1234", "name": "Test User"}
+        payload = {"email": "test_two@example.com", "password": "Propylon2026", "name": "Test User"}
         api_client.post(self.URL, payload, format="json")
         resp = api_client.post(self.URL, payload, format="json")
         assert resp.status_code == 400
@@ -32,7 +32,7 @@ class TestRegister:
         assert resp.status_code == 400
 
     def test_missing_email_returns_400(self, api_client):
-        resp = api_client.post(self.URL, {"password": "test1234"}, format="json")
+        resp = api_client.post(self.URL, {"password": "Propylon2026"}, format="json")
         assert resp.status_code == 400
 
 
@@ -44,14 +44,14 @@ class TestLogin:
     def registered_user(self, api_client):
         api_client.post(
             self.REGISTER_URL,
-            {"email": "test@example.com", "password": "test1234", "name": "Login User"},
+            {"email": "test@example.com", "password": "Propylon2026", "name": "Login User"},
             format="json",
         )
 
     def test_returns_token(self, api_client):
         resp = api_client.post(
             self.URL,
-            {"email": "test@example.com", "password": "test1234"},
+            {"email": "test@example.com", "password": "Propylon2026"},
             format="json",
         )
         assert resp.status_code == 200
@@ -62,7 +62,7 @@ class TestLogin:
     def test_wrong_password_returns_400(self, api_client):
         resp = api_client.post(
             self.URL,
-            {"email": "login@example.com", "password": "testtest1234"},
+            {"email": "login@example.com", "password": "wrongpassword2026"},
             format="json",
         )
         assert resp.status_code == 400
@@ -70,7 +70,7 @@ class TestLogin:
     def test_unknown_email_returns_400(self, api_client):
         resp = api_client.post(
             self.URL,
-            {"email": "nobody@example.com", "password": "test1234"},
+            {"email": "nobody@example.com", "password": "Propylon2026"},
             format="json",
         )
         assert resp.status_code == 400
