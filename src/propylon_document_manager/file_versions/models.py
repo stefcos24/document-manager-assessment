@@ -33,6 +33,11 @@ class User(AbstractUser):
         return reverse("users:detail", kwargs={"pk": self.id})
 
 
+class ReadPermission(models.TextChoices):
+    PRIVATE = "private", "Private"
+    PUBLIC = "public", "Public"
+
+
 def file_upload_path(instance, filename):
     """Organise uploads by user ID to avoid collisions between users."""
     return os.path.join("uploads", str(instance.owner_id), filename)
@@ -68,6 +73,11 @@ class FileVersion(models.Model):
         default="application/octet-stream",
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    read_permission = models.CharField(
+        max_length=10,
+        choices=ReadPermission.choices,
+        default=ReadPermission.PRIVATE,
+    )
 
     class Meta:
         unique_together = [("owner", "file_url", "version_number")]
