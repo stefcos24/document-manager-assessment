@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, password_validation
 from rest_framework import serializers
 
-from ..models import FileVersion, User
+from ..models import FileVersion, ReadPermission, User
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -81,6 +81,7 @@ class FileVersionSerializer(serializers.ModelSerializer):
             "file_size",
             "content_type",
             "created_at",
+            "read_permission",
         ]
         read_only_fields = fields
 
@@ -88,6 +89,11 @@ class FileVersionSerializer(serializers.ModelSerializer):
 class FileVersionUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
     file_url = serializers.CharField(max_length=2048)
+    read_permission = serializers.ChoiceField(
+        choices=ReadPermission.choices,
+        default=ReadPermission.PRIVATE,
+        required=False,
+    )
 
     def validate_file_url(self, value):
         cleaned = value.strip("/")

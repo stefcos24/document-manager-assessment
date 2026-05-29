@@ -11,7 +11,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from ..models import FileVersion
+from django.db.models import Q
+
+from ..models import FileVersion, ReadPermission
 from .serializers import (
     EmailAuthTokenSerializer,
     FileVersionSerializer,
@@ -100,6 +102,7 @@ class FileVersionViewSet(RetrieveModelMixin, ListModelMixin, GenericViewSet):
             file_hash=file_hash,
             file_size=uploaded_file.size,
             content_type=uploaded_file.content_type or "application/octet-stream",
+            read_permission=serializer.validated_data["read_permission"],
         )
 
         return Response(
@@ -113,7 +116,10 @@ class DocumentRetrieveView(APIView):
         file_url = file_url.strip("/")
         revision = request.query_params.get("revision")
 
-        queryset = FileVersion.objects.filter(owner=request.user, file_url=file_url)
+        queryset = FileVersion.objects.filter(
+            Q(owner=request.user) | Q(read_permission=ReadPermission.PUBLIC),
+            file_url=file_url,
+        )
 
         if not queryset.exists():
             return Response(
@@ -155,11 +161,14 @@ class CASRetrieveView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        file_version = get_object_or_404(
-            FileVersion,
-            owner=request.user,
-            file_hash=file_hash.lower(),
+        file_version = (
+            FileVersion.objects.filter(
+                Q(owner=request.user) | Q(read_permission=ReadPermission.PUBLIC),
+                file_hash=file_hash.lower(),
+            ).first()
         )
+        if file_version is None:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
         response = FileResponse(
             file_version.file.open("rb"),
