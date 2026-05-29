@@ -29,12 +29,21 @@ def api_client():
     return APIClient()
 
 
-@pytest.fixture
-def auth_client(user):
-    client = APIClient()
+def make_auth_client(user):
     token, _ = Token.objects.get_or_create(user=user)
+    client = APIClient()
     client.credentials(HTTP_AUTHORIZATION=f"Token {token.key}")
     return client
+
+
+@pytest.fixture
+def auth_client(user):
+    return make_auth_client(user)
+
+
+@pytest.fixture
+def other_auth_client(db):
+    return make_auth_client(UserFactory())
 
 
 def make_file(content: bytes = b"hello", name: str = "test.txt") -> io.BytesIO:
